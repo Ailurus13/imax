@@ -222,9 +222,9 @@ async function sendDiscordNotification(available: KinepolisShowtime[]): Promise<
 
 // ── CLI entrypoint ────────────────────────────────────────────────────────────
 
-const _rawId = parseInt(process.argv[2], 10);
+const _rawId = parseInt(process.env.CORPORATE_ID ?? "", 10);
 if (isNaN(_rawId)) {
-  console.error("Usage : tsx script.ts <corporateId>");
+  console.error("CORPORATE_ID env var is not set");
   process.exit(1);
 }
 const CORPORATE_ID = _rawId;

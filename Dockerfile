@@ -7,4 +7,4 @@ RUN npm install
 
 COPY script.ts ./
 
-ENTRYPOINT ["npm", "start", "--"]
+ENTRYPOINT ["npm", "start"]
