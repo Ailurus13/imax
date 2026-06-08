@@ -9,7 +9,7 @@ const BASE_API        = "https://kinepolisweb-programmation.kinepolis.com/api";
 const BASE_SITE       = "https://kinepolis.be";
 const COUNTRY         = "BE";
 const CIRCUIT         = "KinepolisBelgium";
-const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK ?? (() => { throw new Error("DISCORD_WEBHOOK env var is not set"); })();
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK ?? (() => { throw new Error(`DISCORD_WEBHOOK env var is not set (available vars: ${Object.keys(process.env).join(", ")})`); })();
 const POLL_INTERVAL_MS = 2 * 60 * 1000;
 
 // ── Types bruts API ───────────────────────────────────────────────────────────
