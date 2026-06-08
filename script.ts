@@ -9,7 +9,7 @@ const BASE_API        = "https://kinepolisweb-programmation.kinepolis.com/api";
 const BASE_SITE       = "https://kinepolis.be";
 const COUNTRY         = "BE";
 const CIRCUIT         = "KinepolisBelgium";
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1513627363915857992/5BVKVATeCl-Cx6zpeID3M1b42587RJ3rrbeVE4kQ1s8YnWiuIfsmsmOJye5J_XwWSmEX";
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK ?? (() => { throw new Error("DISCORD_WEBHOOK env var is not set"); })();
 const POLL_INTERVAL_MS = 2 * 60 * 1000;
 
 // ── Types bruts API ───────────────────────────────────────────────────────────
@@ -171,6 +171,29 @@ export function groupByCinemaAndDate(
 
 // ── Discord notification ──────────────────────────────────────────────────────
 
+async function sendDiscordRaw(payload: object): Promise<void> {
+  const res = await fetch(DISCORD_WEBHOOK, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    console.error(`Discord webhook error: ${res.status} ${res.statusText}`);
+  }
+}
+
+async function sendStartNotification(): Promise<void> {
+  await sendDiscordRaw({
+    embeds: [{
+      title: "🟢 Surveillance démarrée",
+      description: `Surveillance du film **corporateId=${CORPORATE_ID}** lancée.\nIntervalle : ${POLL_INTERVAL_MS / 1000}s`,
+      color: 0x5865f2,
+      timestamp: new Date().toISOString(),
+      footer: { text: "Kinepolis Belgique — bot de surveillance" },
+    }],
+  });
+}
+
 async function sendDiscordNotification(available: KinepolisShowtime[]): Promise<void> {
   const fields = available.map((s) => {
     const time = s.showtime.toLocaleString("fr-BE", {
@@ -193,24 +216,18 @@ async function sendDiscordNotification(available: KinepolisShowtime[]): Promise<
     footer: { text: "Kinepolis Belgique — bot de surveillance" },
   };
 
-  const body = JSON.stringify({ content: "@everyone", embeds: [embed] });
-
-  const res = await fetch(DISCORD_WEBHOOK, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
-  });
-
-  if (!res.ok) {
-    console.error(`Discord webhook error: ${res.status} ${res.statusText}`);
-  } else {
-    console.log(`✓ Notification Discord envoyée (${available.length} séance(s))`);
-  }
+  await sendDiscordRaw({ content: "@everyone", embeds: [embed] });
+  console.log(`✓ Notification Discord envoyée (${available.length} séance(s))`);
 }
 
 // ── CLI entrypoint ────────────────────────────────────────────────────────────
 
-const CORPORATE_ID = 35300;
+const _rawId = parseInt(process.argv[2], 10);
+if (isNaN(_rawId)) {
+  console.error("Usage : tsx script.ts <corporateId>");
+  process.exit(1);
+}
+const CORPORATE_ID = _rawId;
 
 let notified = false;
 
@@ -235,6 +252,8 @@ async function check(): Promise<void> {
 async function main() {
   console.log(`Surveillance Kinepolis — corporateId=${CORPORATE_ID}`);
   console.log(`Intervalle : ${POLL_INTERVAL_MS / 1000}s\n`);
+
+  await sendStartNotification();
 
   try {
     await check();
