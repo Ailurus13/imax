@@ -136,7 +136,15 @@ export async function fetchSessions(
 ): Promise<KinepolisShowtime[]> {
   const url = `${BASE_API}/Sessions/${country}/FR/${corporateId}/WWW/Cinema/${circuit}`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+      "Accept": "application/json, text/plain, */*",
+      "Accept-Language": "fr-BE,fr;q=0.9,en;q=0.8",
+      "Referer": "https://kinepolis.be/",
+      "Origin": "https://kinepolis.be",
+    },
+  });
   if (!response.ok) {
     throw new Error(`Sessions API error: ${response.status} ${response.statusText} — ${url}`);
   }
