@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-COPY script.ts ./
+COPY main.ts ./
+COPY src/ ./src/
 
 ENTRYPOINT ["npm", "start"]
