@@ -7,12 +7,16 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "tsx script.ts",
+    "start": "tsx main.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/node": "^25.9.2",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }

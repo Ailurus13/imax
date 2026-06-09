@@ -9,5 +9,5 @@
     "types": ["node"],
     "outDir": "dist"
   },
-  "include": ["*.ts"]
+  "include": ["*.ts", "src/**/*.ts", "src/imax/**/*.ts", "src/kinepolis/**/*.ts"]
 }
