@@ -109,7 +109,7 @@ async function main() {
   console.log(`  Kinepolis : corporateId=${CORPORATE_ID}, intervalle=${KINEPOLIS_INTERVAL / 1000}s`);
   console.log(`  IMAX      : The Odyssey, intervalle=${IMAX_INTERVAL / 1000}s\n`);
 
-  // await sendStartNotification(CORPORATE_ID, KINEPOLIS_INTERVAL);
+  await sendStartNotification(CORPORATE_ID, KINEPOLIS_INTERVAL);
 
   await Promise.all([kinopolisLoop(), imaxLoop()]);
 }
